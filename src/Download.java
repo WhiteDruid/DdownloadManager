@@ -3,7 +3,7 @@ import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Observable;
-
+// by Taha ( White Druid ) 
 // in class file ro az adres download mikone
 public class Download extends Observable implements Runnable {
 
@@ -107,14 +107,43 @@ public class Download extends Observable implements Runnable {
 		 		   // Connect to server.
 		 		connection.connect();
 		 		
-		 	} 
-		 
+		 		// make sure response code is in the 200 range 
+		 		if (connection.getResponseCode() / 100 !=2 ) {
+		 			error();
+		 			}
+		 		  // Check for valid content length.
+		 		int  contentLength =  connection.getContentLength();	
+		 		if ( contentLength < 1 ) {
+		 			error();
+		 		}
+		 		
+		 		if (status == DOWNLODING ) {
+		 			status = COMPLETE ;
+		 			stateChanged();
+		 		}
+		 	}   catch (Exception e){
+		 		error();
+		 	} finally { 
+		 		// close file
+		 			if(file != null ) {
+		 				try {
+		 					file.close();
+		 				} catch (Exception e) {	
+		 			}
+		 		}
+		 			// close the connection to the server
+		 			 if (stream != null ) {
+		 				 try { 
+		 					 stream.close();
+		 				 } catch (Exception e){					 
+		 			 }
+		 		 }
+		 	}
 		}
-		
-		//
-		
+		//Notify observers that this download's status has changed.
 	    private void stateChanged() {
-			
+			setChanged();
+			notifyObservers();
 		}
 	
 }
