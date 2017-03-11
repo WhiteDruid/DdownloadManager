@@ -1,8 +1,7 @@
-import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Observable;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
 // by Taha ( White Druid ) 
 // in class file ro az adres download mikone
 public class Download extends Observable implements Runnable {
@@ -115,6 +114,37 @@ public class Download extends Observable implements Runnable {
 		 		int  contentLength =  connection.getContentLength();	
 		 		if ( contentLength < 1 ) {
 		 			error();
+		 		}
+		 		
+		 		if (size == -1 ) {
+		 			size = contentLength;
+		 			stateChanged();
+		 		}
+		 		
+		 	 // Open file and seek to the end of it
+		 		file = new RandomAccessFile(getFileName(url) , "rw");
+		 		file.seek(Downloaded);	
+		 		stream = connection.getInputStream();
+		 		while (status == DOWNLODING){
+		 			 /* Size buffer according to how much of the
+		            file is left to download. */
+		 			byte buffer[] ;
+		 					if (size - Downloaded > MAX_BUFFER_SIZE ) {
+		 						buffer = new byte[MAX_BUFFER_SIZE];
+		 					} else {
+		 						buffer = new byte[size - Downloaded ];
+		 					}
+		 					
+		 	 // Read from server into buffer.
+		 			int read = stream.read(buffer);
+		 			if ( read == -1) {
+		 				break;
+		 			}
+		 					
+		 	 // write 	buffer to file 
+		 			file.write(buffer , 0 , read);
+		 				Downloaded += read; 
+		 				stateChanged();		
 		 		}
 		 		
 		 		if (status == DOWNLODING ) {
