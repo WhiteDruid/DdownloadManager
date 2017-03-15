@@ -56,7 +56,7 @@ import javax.swing.event.*;
 	  		
 	  		//Set up panel 
 		  		JPanel addPanle = new JPanel();
-		  		addTextField = JTextField(30);
+		  		addTextField = new JTextField(30);
 		  		addPanle.add(addTextField);
 		  		JButton addButton = new JButton("add download");
 		  		addButton.addActionListener(new ActionListener() {
